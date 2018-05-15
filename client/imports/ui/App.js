@@ -1,29 +1,49 @@
 // Crate App Component
 import React, { Component } from 'react';
+// Modify App components to get tasks from collection
+import ReactDOM from 'react-dom';
+import { withTracker } from 'meteor/react-meteor-data';
+
+import { Tasks } from '../api/tasks.js';
 
 import Task from './Task.js';
 
 // App component - represent the whole app
-export default class App extends Component {
-    getTasks() {
-        return [
-            {_id: 1, text: 'This is task 1' },
-            {_id: 2, text: 'This is task 2' },
-            {_id: 3, text: 'This is task 3' },
-        ];
-    }
+class App extends Component {
+  handleSubmit(event) {
+    event.preventDefault();
+    
+    // Find the text field via the React ref
+    const text = ReactDOM.findDOMNode(this.refs.textInput).nodeValue.trim();
 
-    renderTasks() {
-        return this.getTasks().map((task) => (
-            <Task key={task._id} task={task} />
-        ));
-    }
+    Tasks.insert({
+        text,
+        createdAt: new Date(), // current time
+    });
+
+    // clear form
+    ReactDOM.findDOMNode(this.refs.testInput).value = '';
+  }
+  
+  renderTasks() {
+      return this.props.tasks.map((task) => (
+          <Task key={task._id} task={task} />
+      ));
+   } 
 
     render() {
         return (
             <div className="container">
                 <header>
                     <h1>Todo List</h1>
+                  
+                    <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
+                        <input
+                          type="text"
+                          ref="textInput"
+                          placeholder="Type to add new tasks"
+                        />
+                    </form>
                 </header>
 
                 <ul>
@@ -31,5 +51,10 @@ export default class App extends Component {
                 </ul>
             </div>
         );
+      }
     }
-}
+    export default withTracker(() => {
+        return {
+            tasks: Tasks.find({}).fetch(),
+        };
+    })(App);
