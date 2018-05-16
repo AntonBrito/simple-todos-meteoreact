@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 // Modify App components to get tasks from collection
 import ReactDOM from 'react-dom';
+
 import { withTracker } from 'meteor/react-meteor-data';
 
 import { Tasks } from '../api/tasks.js';
@@ -14,7 +15,7 @@ class App extends Component {
     event.preventDefault();
     
     // Find the text field via the React ref
-    const text = ReactDOM.findDOMNode(this.refs.textInput).nodeValue.trim();
+    const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
 
     Tasks.insert({
         text,
@@ -22,7 +23,7 @@ class App extends Component {
     });
 
     // clear form
-    ReactDOM.findDOMNode(this.refs.testInput).value = '';
+    ReactDOM.findDOMNode(this.refs.textInput).value = '';
   }
   
   renderTasks() {
