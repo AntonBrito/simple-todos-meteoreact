@@ -30,7 +30,7 @@ export default class Task extends Component {
           type="checkbox"
           readOnly
           checked={!!this.props.task.checked}
-          onClicked={this.toggleChecked.bind(this)}
+          onClick={this.toggleChecked.bind(this)}
         />
 
         <span className="text">{this.props.task.text}</span>
