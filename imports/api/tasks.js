@@ -8,7 +8,7 @@ export const Tasks = new Mongo.Collection('tasks');
 
 if (Meteor.isServer) {
   // This code only runs on the server
-  Meteor.publish('tasks' function tasksPublication() {
+  Meteor.publish('tasks', function tasksPublication() {
       return Tasks.find();
   });
 }
@@ -47,7 +47,7 @@ Meteor.methods({
         const task = Tasks.findOne(taskId);
 
         // Make sure only the task owner can make a task private
-        if (task.owner !== this.userId {
+        if (task.owner !== this.userId) {
             throw new Meteor.Error('not-authorized');
         }
         Tasks.update(taskId, { $set: { private:setToPtivate } });
