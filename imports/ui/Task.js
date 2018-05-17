@@ -14,7 +14,10 @@ export default class Task extends Component {
   deleteThisTask() {
     Meteor.call('tasks.remove', this.props.task._id);
   }
-
+  // Added private button event handler to Task
+  togglePrivate() {
+    Meteor.call('tasks.setPrivate', this.props.task._id, ! this.props.task.private);
+  }
   render() {
     // Give tasks a different className when they are checked off,
     // so that we can style them nicely in CSS
