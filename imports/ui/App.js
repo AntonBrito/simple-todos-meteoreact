@@ -2,6 +2,8 @@
 import React, { Component } from 'react';
 // Modify App components to get tasks from collection
 import ReactDOM from 'react-dom';
+// Update inser to save username and owner
+import { Meteor } from 'meteor/meteor';
 
 import { withTracker } from 'meteor/react-meteor-data';
 
@@ -27,19 +29,21 @@ class App extends Component {
     const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
 
     Meteor.call('tasks.insert', text);
-    // Tasks.insert({
-    //     text,
-    //     createdAt: new Date(), // current time
-    // });
+     Tasks.insert({
+         text,
+         createdAt: new Date(), // current time
+         owner: Meteor.userId(),          // _id of logged in user
+         username: Meteor.user().username, // username of logged in user
+     });
 
     // clear form
     ReactDOM.findDOMNode(this.refs.textInput).value = '';
   }
   // Add toggleHideComplete handler to App
   toggleHideCompleted() {
-      this.setState({
-        hideCompleted: !this.state.hideCompleted,
-      });
+    this.setState({
+      hideCompleted: !this.state.hideCompleted,
+    });
   }
 
   renderTasks() {
@@ -69,13 +73,16 @@ class App extends Component {
                     </label>
 
                     <AccountsUIWrapper />
-                    <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
+
+                    { this.props.currentUser ?
+                      <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
                         <input
                           type="text"
                           ref="textInput"
                           placeholder="Type to add new tasks"
-                         />
-                    </form>
+                        />
+                      </form> : ''
+                    }
                 </header>
 
                 <ul>
@@ -88,6 +95,7 @@ class App extends Component {
     export default withTracker(() => {
       return {
         tasks: Tasks.find({}, { sort: { createdAt: -1 } }).fetch(),
-        imcompleteCouunt: Tasks.find({ checked: { $ne: true } }).count(),
+        incompleteCount: Tasks.find({ checked: { $ne: true } }).count(),
+        currentUser: Meteor.user(),
       };
     })(App);

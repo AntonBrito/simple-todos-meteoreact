@@ -2,8 +2,9 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { render } from 'react-dom';
 
+import '../imports/atartup/accounts-config.js';
 import App from '../imports/ui/App.js';
-// import { Tasks } from '../client/imports/api/tasks.js';
+
 Meteor.startup(() => {
   render(<App />, document.getElementById('render-target'));
 });
