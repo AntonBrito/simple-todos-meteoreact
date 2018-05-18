@@ -37,7 +37,7 @@ Meteor.methods({
     },
     'tasks.remove'(taskId) {
         check(taskId, String);
-
+        // Added extra security to methods
         const task = Tasks.findOne(taskId);
         if (task.private && task.owner !== this.userId) {
           // If the task is private, make sute only the owner can delete it
@@ -49,6 +49,12 @@ Meteor.methods({
     'tasks.setChecked'(taskId, setChecked) {
         check(taskId, String);
         check(setChecked, Boolean);
+
+        const task = Tasks.findOne(taskId);
+        if (task.private && task.owner !== this.userId) {
+          // If the new task is private, make sure only the owner can check it off
+          throw new Meteor.Error('not-authorized');
+        }
 
         Task.update(taskId, { $set: { checked: setChecked } });
     },
